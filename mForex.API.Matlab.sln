@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mForex.API.Matlab", "mForex
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matlab", "Matlab", "{A51AE6A4-74CB-4A17-BCAC-F1F98EFAD7E7}"
 	ProjectSection(SolutionItems) = preProject
-		mForex.API.Matlab\client.m = mForex.API.Matlab\client.m
+		Matlab\client.m = Matlab\client.m
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DBF445E9-75DD-4443-A0F4-4E91E7756F6A}"
