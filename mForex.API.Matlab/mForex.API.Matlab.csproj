@@ -47,6 +47,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\ExceptionEventArgs.cs" />
+    <Compile Include="Events\TradeUpdateEventArgs.cs" />
+    <Compile Include="Events\MarginLevelEventArgs.cs" />
     <Compile Include="Events\TickEventArgs.cs" />
     <Compile Include="MatlabClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
