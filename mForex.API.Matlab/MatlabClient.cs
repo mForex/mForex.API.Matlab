@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Threading.Tasks;
 using mForex.API;
+using mForex.API.Packets;
 
 namespace mForex.API.Matlab 
 {
@@ -73,27 +75,27 @@ namespace mForex.API.Matlab
         #endregion
 
         #region ITradeProvider
-        public System.Threading.Tasks.Task<Packets.TradeTransResponsePacket> CloseOrder(int orderId, double volume)
+        public Task<TradeTransResponsePacket> CloseOrder(int orderId, double volume)
         {
             throw new NotImplementedException();
         }
 
-        public System.Threading.Tasks.Task<Packets.TradeTransResponsePacket> DeleteOrder(int orderId)
+        public Task<TradeTransResponsePacket> DeleteOrder(int orderId)
         {
             throw new NotImplementedException();
         }
 
-        public System.Threading.Tasks.Task<Packets.TradeTransResponsePacket> ModifyOrder(int orderId, double newPrice, double newStopLoss, double newTakeProfit, double newVolume, DateTime newExpiration)
+        public Task<TradeTransResponsePacket> ModifyOrder(int orderId, double newPrice, double newStopLoss, double newTakeProfit, double newVolume, DateTime newExpiration)
         {
             throw new NotImplementedException();
         }
 
-        public System.Threading.Tasks.Task<Packets.TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume, string comment)
+        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume, string comment)
         {
             throw new NotImplementedException();
         }
 
-        public System.Threading.Tasks.Task<Packets.TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume)
+        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume)
         {
             throw new NotImplementedException();
         }
