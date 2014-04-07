@@ -11,7 +11,14 @@ classdef apiClient
         LoggedIn   % Aauthentication status
     end
     
+    % Class methods
     methods
+        function obj = apiClient(serverType)
+            if ~isa(serverType, 'ServerType')
+                error('Not a mForex.Api.ServerType!');
+            end                                
+            connection = APIConnection(serverType);
+        end
     end
     
 end
