@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using mForex.API;
 using mForex.API.Packets;
 
-namespace mForex.API.Matlab 
+namespace mForex.API.Matlab
 {
     public class MatlabClient : ITradeProvider
     {
@@ -14,7 +14,7 @@ namespace mForex.API.Matlab
         /// Occurs when new ticks are received from the server.
         /// </summary>
         public event TickEventHandler Ticks;
-        
+
         /// <summary>
         /// Occurs when margin level is updated. 
         /// However, this cannot occur more often than once per second.
@@ -23,7 +23,7 @@ namespace mForex.API.Matlab
         /// If margin level was requested explicitly, this even will not be fired.
         /// </remarks>
         public event MarinLevelEventHandler Margin;
-        
+
         /// <summary>
         /// Occurs when client is disconnected from server with exception.
         /// </summary>
@@ -36,13 +36,22 @@ namespace mForex.API.Matlab
         /// </remarks>
         /// </summary>
         public event TradeUpdateEventHandler TradeUpdate;
-        
 
-        public MatlabClient()
-        {             
-        
+        public MatlabClient(ServerType serverType)
+        {
+            apiClient = new APIClient(new APIConnection(serverType));
         }
-        
+
+        public async Task Connect()
+        {                        
+            await apiClient.Connect();
+        }
+
+        public void Disconnect()
+        {
+            apiClient.Disconnect();
+        }
+
         #region Events
         protected void OnTicks(TickEventArgs e)
         {
@@ -50,22 +59,22 @@ namespace mForex.API.Matlab
             if (h != null)
                 EventHandler.RiseSafely(() => h(this, e));
         }
-        
-        
+
+
         private void OnMargin(MarinLevelEventArgs ml)
         {
             var h = Margin;
             if (h != null)
                 EventHandler.RiseSafely(() => h(this, ml));
         }
-        
+
         private void OnTradeUpdate(TradeUpdateEventArgs tup)
         {
             var h = TradeUpdate;
             if (TradeUpdate != null)
-                EventHandler.RiseSafely(() => h(this,tup));
+                EventHandler.RiseSafely(() => h(this, tup));
         }
-        
+
         private void OnDisconnected(ExceptionEventArgs exc)
         {
             var h = Disconnected;
