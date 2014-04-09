@@ -8,9 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matlab", "Matlab", "{A51AE6A4-74CB-4A17-BCAC-F1F98EFAD7E7}"
 	ProjectSection(SolutionItems) = preProject
 		Matlab\ApiClient.m = Matlab\ApiClient.m
+		Matlab\GetLoginData.m = Matlab\GetLoginData.m
 		Matlab\IsAssemblyAdded.m = Matlab\IsAssemblyAdded.m
 		Matlab\LoadDll.m = Matlab\LoadDll.m
 		Matlab\LoginPrompt.m = Matlab\LoginPrompt.m
+		Matlab\ServerType.m = Matlab\ServerType.m
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DBF445E9-75DD-4443-A0F4-4E91E7756F6A}"

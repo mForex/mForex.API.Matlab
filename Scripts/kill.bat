@@ -2,9 +2,9 @@
 CALL :sub_close_if_running MATLAB.exe
 CALL :sub_wait_for_it  MATLAB.exe
 
-copy /Y %1\protobuf-net.dll %2
-copy /Y %1\mForex.API.dll %2
-copy /Y %1\mForex.API.Matlab.dll %2
+copy /Y %1\protobuf-net.dll %2\Dll
+copy /Y %1\mForex.API.dll %2\Dll
+copy /Y %1\mForex.API.Matlab.dll %2\Dll
 
 CALL :sub_load_Matlab %wasRunning% %2 LoadDll
 

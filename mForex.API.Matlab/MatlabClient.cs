@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using mForex.API;
 using mForex.API.Packets;
@@ -9,6 +10,7 @@ namespace mForex.API.Matlab
     {
 
         private APIClient apiClient;
+        private bool isConnected;
 
         /// <summary>
         /// Occurs when new ticks are received from the server.
@@ -37,20 +39,78 @@ namespace mForex.API.Matlab
         /// </summary>
         public event TradeUpdateEventHandler TradeUpdate;
 
-        public MatlabClient(ServerType serverType)
+        public MatlabClient()
         {
-            apiClient = new APIClient(new APIConnection(serverType));
+            isConnected = false;
         }
 
-        public async Task Connect()
-        {                        
-            await apiClient.Connect();
+        public Task<LoginResponsePacket> Login(int login, string password, ServerType serverType)
+        {
+            if (!isConnected)
+                return Relog(login, password, serverType);
+            else
+                return Relog(login, password, serverType, true);
         }
-
-        public void Disconnect()
+        public void Logout()
         {
             apiClient.Disconnect();
+
         }
+        public Task<TickRegistrationResponsePacket> RequestTickRegistration(string symbol, RegistrationAction action)
+        {
+            return apiClient.RequestTickRegistration(symbol, action);
+        }
+        public Task<CandleResponsePacket> RequestCandles(string symbol, CandlePeriod period, DateTime from, DateTime to)
+        {
+            return apiClient.RequestCandles(symbol, period, from, to);
+        }
+        public Task<SessionScheduleResponsePacket> RequestSessions(string symbol)
+        {
+            return apiClient.RequestSessions(symbol);
+        }
+        public Task<ClosedTradesResponsePacket> RequestTradesHistory(DateTime from, DateTime to)
+        {
+            return apiClient.RequestTradesHistory(from, to);
+        }
+        public Task<InstrumentSettingsResponsePacket> RequestInstrumentSettings()
+        {
+            return apiClient.RequestInstrumentSettings();
+        }
+        public Task<AccountSettingsResponsePacket> RequestAccountSettings()
+        {
+            return apiClient.RequestAccountSettings();
+        }
+        public Task<MarginLevelResponsePacket> RequestMarginLevel()
+        {
+            return apiClient.RequestMarginLevel();
+        }
+        public Task<TradesInfoResponsePacket> RequestOpenTrades()
+        {
+            return apiClient.RequestOpenTrades();
+        }
+
+        #region ITradeProvider
+        public Task<TradeTransResponsePacket> CloseOrder(int orderId, double volume)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<TradeTransResponsePacket> DeleteOrder(int orderId)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<TradeTransResponsePacket> ModifyOrder(int orderId, double newPrice, double newStopLoss, double newTakeProfit, double newVolume, DateTime newExpiration)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume, string comment)
+        {
+            throw new NotImplementedException();
+        }
+        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         #region Events
         protected void OnTicks(TickEventArgs e)
@@ -59,55 +119,37 @@ namespace mForex.API.Matlab
             if (h != null)
                 EventHandler.RiseSafely(() => h(this, e));
         }
-
-
         private void OnMargin(MarinLevelEventArgs ml)
         {
             var h = Margin;
             if (h != null)
                 EventHandler.RiseSafely(() => h(this, ml));
         }
-
         private void OnTradeUpdate(TradeUpdateEventArgs tup)
         {
             var h = TradeUpdate;
             if (TradeUpdate != null)
                 EventHandler.RiseSafely(() => h(this, tup));
         }
-
         private void OnDisconnected(ExceptionEventArgs exc)
         {
+            isConnected = false;
             var h = Disconnected;
             if (h != null)
                 EventHandler.RiseSafely(() => h(this, exc));
         }
         #endregion
 
-        #region ITradeProvider
-        public Task<TradeTransResponsePacket> CloseOrder(int orderId, double volume)
+        private Task<LoginResponsePacket> Relog(int login, string password, ServerType serverType, bool reconnect = false)
         {
-            throw new NotImplementedException();
-        }
+            if (reconnect)
+                apiClient.Disconnect();
+            
+            apiClient = new APIClient(new APIConnection(serverType));
+            apiClient.Connect().Wait();
+            isConnected = true;
 
-        public Task<TradeTransResponsePacket> DeleteOrder(int orderId)
-        {
-            throw new NotImplementedException();
+            return apiClient.Login(login, password);
         }
-
-        public Task<TradeTransResponsePacket> ModifyOrder(int orderId, double newPrice, double newStopLoss, double newTakeProfit, double newVolume, DateTime newExpiration)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume, string comment)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume)
-        {
-            throw new NotImplementedException();
-        }
-        #endregion
     }
 }
