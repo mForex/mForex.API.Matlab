@@ -7,12 +7,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mForex.API.Matlab", "mForex
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matlab", "Matlab", "{A51AE6A4-74CB-4A17-BCAC-F1F98EFAD7E7}"
 	ProjectSection(SolutionItems) = preProject
-		Matlab\ApiClient.m = Matlab\ApiClient.m
 		Matlab\GetLoginData.m = Matlab\GetLoginData.m
 		Matlab\IsAssemblyAdded.m = Matlab\IsAssemblyAdded.m
 		Matlab\LoadDll.m = Matlab\LoadDll.m
-		Matlab\LoginPrompt.m = Matlab\LoginPrompt.m
-		Matlab\ServerType.m = Matlab\ServerType.m
+		Matlab\PlotTicks.m = Matlab\PlotTicks.m
+		Matlab\PrintTicks.m = Matlab\PrintTicks.m
+		Matlab\Sample1.m = Matlab\Sample1.m
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DBF445E9-75DD-4443-A0F4-4E91E7756F6A}"
@@ -25,6 +25,18 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{CB5D629D-6069-44FA-BEF3-13D8D23555C6}"
 	ProjectSection(SolutionItems) = preProject
 		Scripts\kill.bat = Scripts\kill.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiClient", "ApiClient", "{0B5E383C-7A9D-4CB1-94D9-BD7FD8D56EF7}"
+	ProjectSection(SolutionItems) = preProject
+		Matlab\@ApiClient\ApiClient.m = Matlab\@ApiClient\ApiClient.m
+		Matlab\@ApiClient\GenericHandler.m = Matlab\@ApiClient\GenericHandler.m
+		Matlab\@ApiClient\LoginHandler.m = Matlab\@ApiClient\LoginHandler.m
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TickEventData", "TickEventData", "{D80D291A-AD46-47BA-AC85-E63AB864E5F0}"
+	ProjectSection(SolutionItems) = preProject
+		Matlab\@TickEventData\TickEventData.m = Matlab\@TickEventData\TickEventData.m
 	EndProjectSection
 EndProject
 Global
@@ -40,5 +52,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0B5E383C-7A9D-4CB1-94D9-BD7FD8D56EF7} = {A51AE6A4-74CB-4A17-BCAC-F1F98EFAD7E7}
+		{D80D291A-AD46-47BA-AC85-E63AB864E5F0} = {A51AE6A4-74CB-4A17-BCAC-F1F98EFAD7E7}
 	EndGlobalSection
 EndGlobal

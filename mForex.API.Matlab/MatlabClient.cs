@@ -41,9 +41,9 @@ namespace mForex.API.Matlab
 
         public MatlabClient()
         {
-            isConnected = false;
+            isConnected = false;            
         }
-
+        
         public Task<LoginResponsePacket> Login(int login, string password, ServerType serverType)
         {
             if (!isConnected)
@@ -54,6 +54,7 @@ namespace mForex.API.Matlab
         public void Logout()
         {
             apiClient.Disconnect();
+            isConnected = false;
 
         }
         public Task<TickRegistrationResponsePacket> RequestTickRegistration(string symbol, RegistrationAction action)
@@ -146,10 +147,20 @@ namespace mForex.API.Matlab
                 apiClient.Disconnect();
             
             apiClient = new APIClient(new APIConnection(serverType));
+            InitializeEventHadlers();
+
             apiClient.Connect().Wait();
             isConnected = true;
 
             return apiClient.Login(login, password);
+        }
+
+        private void InitializeEventHadlers()
+        {
+            apiClient.Ticks += (t) => OnTicks(new TickEventArgs(t));
+            apiClient.TradeUpdate += (tup) => OnTradeUpdate(new TradeUpdateEventArgs(tup));
+            apiClient.Disconnected += (exc) => OnDisconnected(new ExceptionEventArgs(exc));
+            apiClient.Margin += (mp) => OnMargin(new MarinLevelEventArgs(mp));
         }
     }
 }
