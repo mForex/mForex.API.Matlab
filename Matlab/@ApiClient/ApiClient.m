@@ -16,8 +16,11 @@ classdef ApiClient < handle
             obj.tickListener = addlistener(obj.client,'Ticks', @(src,evnt)TickEvHandler(obj, src, evnt)); 
         end     
         function delete(obj)
-            delete(obj.client);
+            disp('Class destructor called');
             delete(obj.tickListener);
+            obj.client.Dispose();
+            delete(obj.client);            
+            disp('Class destructor finished');
         end
         function Login(obj, login, password, serverType)
             if ~isa(serverType, 'mForex.API.ServerType')

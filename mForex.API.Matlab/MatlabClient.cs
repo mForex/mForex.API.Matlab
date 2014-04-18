@@ -6,7 +6,7 @@ using mForex.API.Packets;
 
 namespace mForex.API.Matlab
 {
-    public class MatlabClient : ITradeProvider
+    public class MatlabClient : ITradeProvider, IDisposable
     {
 
         private APIClient apiClient;
@@ -41,21 +41,35 @@ namespace mForex.API.Matlab
 
         public MatlabClient()
         {
-            isConnected = false;            
+            isConnected = false;
         }
-        
+
         public Task<LoginResponsePacket> Login(int login, string password, ServerType serverType)
         {
-            if (!isConnected)
-                return Relog(login, password, serverType);
-            else
-                return Relog(login, password, serverType, true);
+            if (isConnected)
+                Logout();
+
+            apiClient = new APIClient(new APIConnection(serverType));
+            InitializeEventHadlers();
+
+            apiClient.Connect().Wait();
+            isConnected = true;
+
+            return apiClient.Login(login, password);
         }
         public void Logout()
         {
-            apiClient.Disconnect();
-            isConnected = false;
-
+            if (isConnected)
+            {
+                try
+                {
+                    apiClient.Disconnect();
+                }
+                finally
+                {
+                    isConnected = false;
+                }
+            }
         }
         public Task<TickRegistrationResponsePacket> RequestTickRegistration(string symbol, RegistrationAction action)
         {
@@ -113,6 +127,19 @@ namespace mForex.API.Matlab
         }
         #endregion
 
+        #region IDisposable
+        public void Dispose()
+        {
+            if (apiClient != null)
+            {
+                if (isConnected)
+                    apiClient.Disconnect();
+
+                apiClient = null;
+            }
+        }
+        #endregion IDisposable
+
         #region Events
         protected void OnTicks(TickEventArgs e)
         {
@@ -140,20 +167,6 @@ namespace mForex.API.Matlab
                 EventHandler.RiseSafely(() => h(this, exc));
         }
         #endregion
-
-        private Task<LoginResponsePacket> Relog(int login, string password, ServerType serverType, bool reconnect = false)
-        {
-            if (reconnect)
-                apiClient.Disconnect();
-            
-            apiClient = new APIClient(new APIConnection(serverType));
-            InitializeEventHadlers();
-
-            apiClient.Connect().Wait();
-            isConnected = true;
-
-            return apiClient.Login(login, password);
-        }
 
         private void InitializeEventHadlers()
         {
