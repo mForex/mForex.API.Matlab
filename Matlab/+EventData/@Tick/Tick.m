@@ -1,4 +1,4 @@
-classdef TickEventData < event.EventData
+classdef Tick < event.EventData
     %TICKEVENTDATA Class object used to store informaction about new ticks
     %   Detailed explanation goes here
     
@@ -7,7 +7,7 @@ classdef TickEventData < event.EventData
     end
     
     methods
-        function obj = TickEventData(ticks)
+        function obj = Tick(ticks)
             obj.Ticks = ticks;
         end
     end

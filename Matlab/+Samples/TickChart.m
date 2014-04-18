@@ -1,5 +1,8 @@
 LoadDll
 
+import mForex.API.*;
+import mForex.API.Matlab.*;
+
 [login, password, serverType] = GetLoginData;
 
 % create plotter 
@@ -16,4 +19,4 @@ event.listener(client,'Ticks',@(src, evnt) p.Refresh(src, evnt));
 client.RegisterTicks('GBPUSD');
 
 %unregister
-client.RegisterTicks('GBPUSD', RegistrationAction.Unregister);
+%client.RegisterTicks('GBPUSD', RegistrationAction.Unregister);
