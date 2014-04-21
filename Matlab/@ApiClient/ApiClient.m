@@ -25,8 +25,17 @@ classdef ApiClient < handle
             delete(obj.tradeListener);
             obj.client.Dispose();
             delete(obj.client);                        
-        end
-        function Login(obj, login, password, serverType)
+        end       
+        function Logout(obj)
+            try 
+                obj.client.Logout();
+                fprintf('Logout has been Succesful\n');
+            catch e
+                fprintf(2,'Error while loging out!\n');
+                fprintf(2, [e.message, '\n']);  
+            end    
+        end           
+        function res = Login(obj, login, password, serverType)
             if ~isa(serverType, 'mForex.API.ServerType')
                 error('ServerType is not a mForex.Api.ServerType!');
             end   
@@ -39,31 +48,22 @@ classdef ApiClient < handle
                 error('Password in not a string!');
             end   
             
-            try
-                Task = obj.client.Login(login, password, serverType);
-                Task.ContinueWith(@(t) obj.LoginHandler(t));
-                Task.Wait();                
+            try                
+                task = obj.client.Login(login, password, serverType);
+                res = obj.EvaluateIfHandled('LoginHandler', task);                                
+                task.Wait();                
             catch e
                 fprintf(2, 'Error while loging in. Please try again.\n');
                 fprintf(2, [e.message, '\n']);                            
             end                                      
         end         
-        function Logout(obj)
-            try 
-                obj.client.Logout();
-                fprintf('Logout has been Succesful\n');
-            catch e
-                fprintf(2,'Error while loging out!\n');
-                fprintf(2, [e.message, '\n']);  
-            end    
-        end           
-        function RegisterTicks(obj, symbol, action)            
+        function res = RegisterTicks(obj, symbol, action)            
             if nargin < 3
                 action = mForex.API.RegistrationAction.Register;
             end
                         
             if ~isa(action, 'mForex.API.RegistrationAction')
-                error('Action is not a mForex.API.RegistrationAction.Register!');
+                error('Action is not of mForex.API.RegistrationAction.Register type!');
             end
             
             if ~isa(symbol, 'char')
@@ -71,32 +71,57 @@ classdef ApiClient < handle
             end   
            
             try
-                obj.client.RequestTickRegistration(symbol, action).ContinueWith(@(t) obj.GenericHandler(t));
+                res = obj.client.RequestTickRegistration(symbol, action).ContinueWith(@(t) obj.GenericHandler(t));
             catch e
-                fprintf(2,'Error while loging out!\n');
+                fprintf(2,'Error while registering for ticks out!\n');
                 fprintf(2, [e.message, '\n']);  
             end      
-        end
+        end        
+        function res = RequestCandles(obj, symbol, period, from, to)
+            if ~isa(symbol, 'char')
+                error('Symbol is not a string!');              
+            end
+            
+            if ~isa(period, 'mForex.API.CandlePeriod')
+                errror('Period is not of mForex.API.CandlePeriod type!');
+            end
+            
+            if ~isa(from, 'System.DateTime') || ~isa(to, 'System.DateTime') 
+                errror('Form or To is not of System.DateTime format');
+            end  
+            
+            try
+                task = obj.client.RequestCandles(symbol, period, from, to);
+                res = obj.EvaluateIfHandled('CandleHandler', task);
+            catch e
+                fprintf(2,'Error while requesting candles!\n');
+                fprintf(2, [e.message, '\n']);  
+            end  
+        end 
     end    
     
     methods (Access=private)
         function TickEvHandler(obj, src, eventData)           
             notify(obj,'Ticks', EventData.Tick(eventData.Ticks))
-        end        
-        
+        end                
         function MarginLevelEvHandler(obj, src, eventData)           
             notify(obj,'Margin', EventData.MarginLevel(eventData.MarginLevel))
-        end
-                
+        end                
         function DisconnectedEvHandler(obj, src, eventData)           
             notify(obj,'Disconnected', EventData.Disconnected(eventData.Exception))
-        end
-        
+        end        
         function TradeUpdateEvHandler(obj, src, eventData)           
             notify(obj,'TradeUpdate', EventData.TradeUpdate(eventData.TradeUpdatePacket.Action, ...
                                                             eventData.TradeUpdatePacket.Trade))
         end
         
+        function res = EvaluateIfHandled(obj, handlerName, task)
+             if ~ismethod(obj, handlerName)                    
+                res =  obj.GenericHandler(task);
+             else                   
+                res = feval(str2func(handlerName),obj, task);
+            end 
+        end         
     end
     
     events 
