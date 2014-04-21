@@ -2,6 +2,7 @@ LoadDll
 
 import mForex.API.*;
 import mForex.API.Matlab.*;
+import Samples.TickChart.*
 
 [login, password, serverType] = GetLoginData;
 
@@ -16,7 +17,10 @@ client.Login(login, password, serverType.toDotNet);
 event.listener(client,'Ticks',@(src, evnt) p.Refresh(src, evnt));
 
 %register for ticks
-client.RegisterTicks('GBPUSD');
+lh = client.RegisterTicks('GBPUSD');
 
-%unregister
-%client.RegisterTicks('GBPUSD', RegistrationAction.Unregister);
+%Remove listener
+    %delete(lh)
+
+%deregister from ticks update
+    %client.RegisterTicks('GBPUSD', RegistrationAction.Unregister);

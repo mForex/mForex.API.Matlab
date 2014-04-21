@@ -14,9 +14,15 @@ classdef ApiClient < handle
         function obj = ApiClient()            
             obj.client = mForex.API.Matlab.MatlabClient;            
             obj.tickListener = addlistener(obj.client,'Ticks', @(src,evnt)TickEvHandler(obj, src, evnt)); 
+            obj.marginListener = addlistener(obj.client, 'Margin', @(src, evnt)MarginLevelEvHandler(obj, src, evnt));
+            obj.disconnectionListener = addlistener(obj.client, 'Disconnected', @(src, evnt)DisconnectedEvHandler(obj, src, evnt));
+            obj.tradeListener = addlistener(obj.client, 'TradeUpdate', @(src, evnt)TradeUpdateEvHandler(obj, src, evnt));
         end     
         function delete(obj)
             delete(obj.tickListener);
+            delete(obj.marginListener);
+            delete(obj.disconnectionListener);
+            delete(obj.tradeListener);
             obj.client.Dispose();
             delete(obj.client);                        
         end
@@ -73,10 +79,24 @@ classdef ApiClient < handle
         end
     end    
     
-    methods
+    methods (Access=private)
         function TickEvHandler(obj, src, eventData)           
             notify(obj,'Ticks', EventData.Tick(eventData.Ticks))
+        end        
+        
+        function MarginLevelEvHandler(obj, src, eventData)           
+            notify(obj,'Margin', EventData.MarginLevel(eventData.MarginLevel))
         end
+                
+        function DisconnectedEvHandler(obj, src, eventData)           
+            notify(obj,'Disconnected', EventData.Disconnected(eventData.Exception))
+        end
+        
+        function TradeUpdateEvHandler(obj, src, eventData)           
+            notify(obj,'TradeUpdate', EventData.TradeUpdate(eventData.TradeUpdatePacket.Action, ...
+                                                            eventData.TradeUpdatePacket.Trade))
+        end
+        
     end
     
     events 
