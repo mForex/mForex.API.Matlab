@@ -165,7 +165,7 @@ classdef ApiClient < handle
                                   orderId);             
         end
         function res = ModifyOrder(obj, orderId, newPrice, newStopLoss, newTakeProfit, newVolume, newExpiration)
-        
+            res = [];
         end
         function res = OpenOrder(obj, symbol, tradeCommand, volume, varargin)
                         
@@ -207,7 +207,7 @@ classdef ApiClient < handle
         function res = OpenMarket(obj, symbol, tradeCommand, volume, comment)
             res = obj.SafeRequest('OpenOrder', 'TradeTransResponseHandler', ...
                       'Error while opening a market order!', ...
-                      symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);     
+                      symbol, tradeCommand, 0, 0, 0, volume, comment);     
         end        
         function res = OpenPending(obj, symbol, tradeCommand, volume, comment, varargin)                                                
 
