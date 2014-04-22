@@ -107,23 +107,23 @@ namespace mForex.API.Matlab
         #region ITradeProvider
         public Task<TradeTransResponsePacket> CloseOrder(int orderId, double volume)
         {
-            throw new NotImplementedException();
+            return apiClient.Trade.CloseOrder(orderId, volume);
         }
         public Task<TradeTransResponsePacket> DeleteOrder(int orderId)
         {
-            throw new NotImplementedException();
+            return apiClient.Trade.DeleteOrder(orderId);
         }
         public Task<TradeTransResponsePacket> ModifyOrder(int orderId, double newPrice, double newStopLoss, double newTakeProfit, double newVolume, DateTime newExpiration)
         {
-            throw new NotImplementedException();
+            return apiClient.Trade.ModifyOrder(orderId, newPrice, newStopLoss, newTakeProfit, newVolume, newExpiration);
         }
         public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume, string comment)
         {
-            throw new NotImplementedException();
+            return apiClient.Trade.OpenOrder(symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);
         }
         public Task<TradeTransResponsePacket> OpenOrder(string symbol, TradeCommand tradeCommand, double price, double stopLoss, double takeProfit, double volume)
         {
-            throw new NotImplementedException();
+            return apiClient.Trade.OpenOrder(symbol, tradeCommand, price, stopLoss, takeProfit, volume);
         }
         #endregion
 

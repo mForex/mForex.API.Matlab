@@ -25,7 +25,8 @@ classdef ApiClient < handle
             delete(obj.tradeListener);
             obj.client.Dispose();
             delete(obj.client);                        
-        end       
+        end
+        
         function Logout(obj)
             try 
                 obj.client.Logout();
@@ -41,7 +42,7 @@ classdef ApiClient < handle
             end   
             
             if ~isa(login, 'double')
-                error('Login is not an integer!');
+                error('Login is not a number!');
             end   
             
             if ~isa(password, 'char')
@@ -50,14 +51,15 @@ classdef ApiClient < handle
             
             try                
                 task = obj.client.Login(login, password, serverType);
-                res = obj.EvaluateIfHandled('LoginHandler', task);                                
-                task.Wait();                
+                task.Wait();
+                res = obj.EvaluateIfHandled('LoginHandler', task);                                                                
             catch e
                 fprintf(2, 'Error while loging in. Please try again.\n');
                 fprintf(2, [e.message, '\n']);                            
             end                                      
-        end         
-        function res = RegisterTicks(obj, symbol, action)            
+        end
+        
+        function res = RegisterTicks(obj, symbol, action)
             if nargin < 3
                 action = mForex.API.RegistrationAction.Register;
             end
@@ -68,16 +70,14 @@ classdef ApiClient < handle
             
             if ~isa(symbol, 'char')
                 error('Symbol in not a string!');
-            end   
-           
-            try
-                res = obj.client.RequestTickRegistration(symbol, action).ContinueWith(@(t) obj.GenericHandler(t));
-            catch e
-                fprintf(2,'Error while registering for ticks out!\n');
-                fprintf(2, [e.message, '\n']);  
-            end      
+            end
+            
+            res = obj.SafeRequest('RequestTickRegistration', 'RegistrationHandler', ...
+                                  'Error while registering for ticks out!', ...
+                                  symbol, action);                
         end        
         function res = RequestCandles(obj, symbol, period, from, to)
+            
             if ~isa(symbol, 'char')
                 error('Symbol is not a string!');              
             end
@@ -88,19 +88,157 @@ classdef ApiClient < handle
             
             if ~isa(from, 'System.DateTime') || ~isa(to, 'System.DateTime') 
                 errror('Form or To is not of System.DateTime format');
-            end  
+            end
             
-            try
-                task = obj.client.RequestCandles(symbol, period, from, to);
-                res = obj.EvaluateIfHandled('CandleHandler', task);
-            catch e
-                fprintf(2,'Error while requesting candles!\n');
-                fprintf(2, [e.message, '\n']);  
-            end  
+            res = obj.SafeRequest('RequestCandles', 'CandleHandler', ...
+                                  'Error while requesting candles!', ...
+                                   symbol, period, from, to);
         end 
+        function res = RequestSessions(obj, symbol)
+            
+            if ~isa(symbol, 'char')
+                error('Symbol is not a string!');              
+            end
+            
+            res = obj.SafeRequest('RequestSessions', 'SessionHandler', ...
+                                  'Error while requesting trading sessions!', ...
+                                  symbol);            
+        end
+        function res = RequestTradesHistory(obj, from, to)
+            
+            if ~isa(from, 'System.DateTime') || ~isa(to, 'System.DateTime') 
+                errror('Form or To is not of System.DateTime format');
+            end
+            
+            res = obj.SafeRequest('RequestTradesHistory', 'HistoryHandler', ...
+                                  'Error while requesting history', ...
+                                  from, to);
+        end
+        function res = RequestInstrumentSettings(obj)
+            
+            res = obj.SefeRequest('RequestInstrumentSettings', 'InstrumentSettingsHandler', ...
+                                  'Error while requesting instrument settings');
+        end
+        function res = RequestAccountSettings(obj)
+            
+            res = obj.SefeRequest('RequestAccountSettings', 'AccountSettingsHandler', ...
+                                  'Error while requesting account settings');
+        end
+        function res = RequestMarginLevel(obj)
+            
+            res = obj.SefeRequest('RequestMarginLevel', 'MarginLevelHandler', ...
+                                  'Error while requesting margin level');
+        end        
+        function res = RequestOpenTrades(obj)
+            
+            res = obj.SafeRequest('RequestOpenTrades', 'OpenTradesHandler', ...
+                                  'Error while requesting open trades');
+        end
+        
+        function res = CloseOrder(obj, orderId, varargin)
+            
+            if ~isa(orderId, 'double') || ~(rem(orderId, 1) == 0)
+                error('OrderId is not an integer!');
+            end                 
+            
+            if nargin < 3                 
+                volume = 100;
+            else                
+                if ~isa(varargin{3}, 'double')
+                    error('Volume is not a number!');
+                end
+                volume = varargin{3};
+            end  
+                        
+            res = obj.SafeRequest('CloseOrder', 'TradeTransResponseHandler', ...
+                                 ['Error while closing an order:',int2str(orderId), '!'], ...
+                                  orderId, volume);             
+        end
+        function res = DeleteOrder(obj, orderId)
+            
+            if ~isa(orderId, 'double') || ~(rem(orderId, 1) == 0)
+                error('OrderId is not an integer!');
+            end
+            
+            res = obj.SafeRequest('DeleteOrder', 'TradeTransResponseHandler', ...
+                                 ['Error while deleting an order:',int2str(orderId), '!'], ...
+                                  orderId);             
+        end
+        function res = ModifyOrder(obj, orderId, newPrice, newStopLoss, newTakeProfit, newVolume, newExpiration)
+        
+        end
+        function res = OpenOrder(obj, symbol, tradeCommand, volume, varargin)
+                        
+            if ~isa(symbol, 'char')
+                error('Order symbol is not a string!');              
+            end
+            
+            if ~isa(tradeCommand, 'mForex.API.TradeCommand')
+                error('Trade command is not of mForex.API.TradeCommand type!');
+            end
+            
+            if ~isa(volume, 'double')
+                error('Order volume is not a number!');
+            end                        
+            
+            comment = 'matlab API';
+            
+            switch(tradeCommand)
+                case mForex.API.TradeCommand.Balance
+                    error('mForex.API.TradeCommand.Balance trade command is not available.');
+                
+                case mForex.API.TradeCommand.Credit
+                    error('mForex.API.TradeCommand.Credit trade command is not available.');
+                
+                case mForex.API.TradeCommand.Buy
+                    res = obj.OpenMarket(symbol, tradeCommand, volume, comment);
+                
+                case mForex.API.TradeCommand.Sell
+                    res = obj.OpenMarket(symbol, tradeCommand, volume, comment);
+                
+                otherwise
+                    res = obj.OpenPending(symbol, tradeCommand, volume, comment, varargin{:});
+            end             
+        end
     end    
     
     methods (Access=private)
+        
+        function res = OpenMarket(obj, symbol, tradeCommand, volume, comment)
+            res = 'Market order!';
+        end        
+        function res = OpenPending(obj, symbol, tradeCommand, volume, comment, varargin)                                                
+
+            [price, stopLoss, takeProfit] = validateArguments(varargin{:});
+            
+            res = obj.SafeRequest('OpenOrder', 'TradeTransResponseHandler', ...
+                                  'Error while opening an order!', ...
+                                  symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);        
+                              
+            % Validate arguments passed to Open Pending function
+            function [price, takeProfit, stopLoss] = validateArguments(varargin)                                                              
+                switch nargin
+                    case 0
+                        error('Pending price is missing!');
+                    
+                    case 1                                  % Only price is given
+                        price = varargin{1};                % get price passed to function
+                        stopLoss = 0;                       % set default values to SL
+                        takeProfit = 0;                     % set default values to TP
+                
+                    case 2                                  % Ony price and stopLoss is given
+                        price = varargin{1};                % get price passed to function
+                        stopLoss = varargin{2};             % get SL passed to function
+                        takeProfit = 0;                     % set default values to Tp
+                        
+                    case 3                                  % Ony price and stopLoss is given
+                        price = varargin{1};                % get price passed to function
+                        stopLoss = varargin{2};             % get SL passed to function
+                        takeProfit = varargin{3};           % get TP passed to function
+                end 
+            end
+        end
+        
         function TickEvHandler(obj, src, eventData)           
             notify(obj,'Ticks', EventData.Tick(eventData.Ticks))
         end                
@@ -115,6 +253,15 @@ classdef ApiClient < handle
                                                             eventData.TradeUpdatePacket.Trade))
         end
         
+        function res = SafeRequest(obj, request, handler, errorMessage, varargin)
+            try                 
+                task = feval(str2func(request), obj.client,varargin{:});
+                res = obj.EvaluateIfHandled(handler, task);
+            catch e
+                fprintf(2, [errorMessage, '\n']);
+                fprintf(2, [e.message, '\n']);                  
+            end
+        end                
         function res = EvaluateIfHandled(obj, handlerName, task)
              if ~ismethod(obj, handlerName)                    
                 res =  obj.GenericHandler(task);
