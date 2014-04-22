@@ -205,14 +205,16 @@ classdef ApiClient < handle
     methods (Access=private)
         
         function res = OpenMarket(obj, symbol, tradeCommand, volume, comment)
-            res = 'Market order!';
+            res = obj.SafeRequest('OpenOrder', 'TradeTransResponseHandler', ...
+                      'Error while opening a market order!', ...
+                      symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);     
         end        
         function res = OpenPending(obj, symbol, tradeCommand, volume, comment, varargin)                                                
 
             [price, stopLoss, takeProfit] = validateArguments(varargin{:});
             
             res = obj.SafeRequest('OpenOrder', 'TradeTransResponseHandler', ...
-                                  'Error while opening an order!', ...
+                                  'Error while opening a pending order!', ...
                                   symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);        
                               
             % Validate arguments passed to Open Pending function
