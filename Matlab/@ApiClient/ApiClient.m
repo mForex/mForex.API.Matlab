@@ -165,7 +165,34 @@ classdef ApiClient < handle
                                   orderId);             
         end
         function res = ModifyOrder(obj, orderId, newPrice, newStopLoss, newTakeProfit, newVolume, newExpiration)
-            res = [];
+            
+            if ~isa(orderId, 'double') || ~(rem(orderId, 1) == 0)
+                error('OrderId is not an integer!');
+            end 
+            
+            if ~isa(newPrice, 'double')
+                error('Price is not a number!');
+            end 
+            
+            if ~isa(newStopLoss, 'double')
+                error('Stop loss is not a number!');
+            end 
+            
+            if ~isa(newTakeProfit, 'double')
+                error('Take profit is not a number!');
+            end 
+            
+            if ~isa(newVolume, 'double')
+                error('Volume is not a number!');
+            end 
+            
+            if ~isa(newExpiration, 'System.DateTime')
+                error('New expiration is not in valid date type!');
+            end             
+            
+            res = obj.SafeRequest('ModifyOrder', 'TradeTransResponseHandler', ...
+                      'Error while modifying pending order!', ...
+                      orderId, newPrice, newStopLoss, newTakeProfit, newVolume, newExpiration);    
         end
         function res = OpenOrder(obj, symbol, tradeCommand, volume, varargin)
                         
@@ -211,14 +238,14 @@ classdef ApiClient < handle
         end        
         function res = OpenPending(obj, symbol, tradeCommand, volume, comment, varargin)                                                
 
-            [price, stopLoss, takeProfit] = validateArguments(varargin{:});
+            [price, stopLoss, takeProfit] = SetDefaultIfMissing(varargin{:});
             
             res = obj.SafeRequest('OpenOrder', 'TradeTransResponseHandler', ...
                                   'Error while opening a pending order!', ...
                                   symbol, tradeCommand, price, stopLoss, takeProfit, volume, comment);        
                               
             % Validate arguments passed to Open Pending function
-            function [price, takeProfit, stopLoss] = validateArguments(varargin)                                                              
+            function [price, takeProfit, stopLoss] = SetDefaultIfMissing(varargin)                                                              
                 switch nargin
                     case 0
                         error('Pending price is missing!');
