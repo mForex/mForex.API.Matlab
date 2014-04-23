@@ -116,17 +116,17 @@ classdef ApiClient < handle
         end
         function res = RequestInstrumentSettings(obj)
             
-            res = obj.SefeRequest('RequestInstrumentSettings', 'InstrumentSettingsHandler', ...
+            res = obj.SafeRequest('RequestInstrumentSettings', 'InstrumentSettingsHandler', ...
                                   'Error while requesting instrument settings');
         end
         function res = RequestAccountSettings(obj)
             
-            res = obj.SefeRequest('RequestAccountSettings', 'AccountSettingsHandler', ...
+            res = obj.SafeRequest('RequestAccountSettings', 'AccountSettingsHandler', ...
                                   'Error while requesting account settings');
         end
         function res = RequestMarginLevel(obj)
             
-            res = obj.SefeRequest('RequestMarginLevel', 'MarginLevelHandler', ...
+            res = obj.SafeRequest('RequestMarginLevel', 'MarginLevelHandler', ...
                                   'Error while requesting margin level');
         end        
         function res = RequestOpenTrades(obj)
