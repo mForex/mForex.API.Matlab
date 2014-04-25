@@ -1,7 +1,8 @@
+if ~IsAssemblyAdded('mForex.API')
+    asmAPI = LoadAssembly('mForex.API'); 
+end
+
 if ~IsAssemblyAdded('mForex.API.Matlab')
-    asmAPI = NET.addAssembly([pwd,'\Dll\mForex.API.dll']);               
-    asmMatlab = NET.addAssembly([pwd,'\Dll\mForex.API.Matlab.dll']);                   
-    import mForex.API.*;
-    import mForex.API.Matlab.*;
+    asmMatlab = LoadAssembly('mForex.API.Matlab');
 end
 

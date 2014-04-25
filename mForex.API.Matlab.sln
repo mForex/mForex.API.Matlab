@@ -9,10 +9,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Matlab", "Matlab", "{A51AE6
 	ProjectSection(SolutionItems) = preProject
 		Matlab\GetLoginData.m = Matlab\GetLoginData.m
 		Matlab\IsAssemblyAdded.m = Matlab\IsAssemblyAdded.m
+		Matlab\LoadAssembly.m = Matlab\LoadAssembly.m
 		Matlab\LoadDll.m = Matlab\LoadDll.m
-		Matlab\PlotTicks.m = Matlab\PlotTicks.m
-		Matlab\PrintTicks.m = Matlab\PrintTicks.m
-		Matlab\Sample1.m = Matlab\Sample1.m
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DBF445E9-75DD-4443-A0F4-4E91E7756F6A}"
@@ -30,13 +28,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiClient", "ApiClient", "{0B5E383C-7A9D-4CB1-94D9-BD7FD8D56EF7}"
 	ProjectSection(SolutionItems) = preProject
 		Matlab\@ApiClient\ApiClient.m = Matlab\@ApiClient\ApiClient.m
+		Matlab\@ApiClient\CandleHandler.m = Matlab\@ApiClient\CandleHandler.m
 		Matlab\@ApiClient\GenericHandler.m = Matlab\@ApiClient\GenericHandler.m
 		Matlab\@ApiClient\LoginHandler.m = Matlab\@ApiClient\LoginHandler.m
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TickEventData", "TickEventData", "{D80D291A-AD46-47BA-AC85-E63AB864E5F0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EventData", "EventData", "{D80D291A-AD46-47BA-AC85-E63AB864E5F0}"
 	ProjectSection(SolutionItems) = preProject
+		Matlab\+EventData\Disconnected.m = Matlab\+EventData\Disconnected.m
+		Matlab\LoadAssembly.m = Matlab\LoadAssembly.m
+		Matlab\+EventData\MarginLevel.m = Matlab\+EventData\MarginLevel.m
+		Matlab\+EventData\Tick.m = Matlab\+EventData\Tick.m
 		Matlab\@TickEventData\TickEventData.m = Matlab\@TickEventData\TickEventData.m
+		Matlab\+EventData\TradeUpdate.m = Matlab\+EventData\TradeUpdate.m
 	EndProjectSection
 EndProject
 Global
