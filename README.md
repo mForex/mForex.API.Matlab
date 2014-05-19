@@ -2,9 +2,7 @@
 #mForex Matlab API
 
 The goal of mForex.Matlab API is to provide flexible, asynchronous programming model for 
-Matlab based on **mForex API**[^mForex_API] for forex trading.
-  
-  [^mForex_API]: [mForex API](https://github.com/mForex/mForex.API) is an open source solution which allows .NET based clients to connect to mForex Trade Server.
+Matlab based on **mForex API** for forex trading.
 
 We are currently conducting beta tests, so our API is only available on demand for demo accounts only. If you would like to participate, please contact us on api@mforex.pl.
 
@@ -22,29 +20,39 @@ asmMatlab = LoadAssembly('mForex.API.Matlab');
 Once you have your account ready, you can log in to our server using following code:
 
 ```matlab
-%One can for example read data from command line
+% read data from command line
 [login, password, serverType] = GetLoginData;
 
-%create API Client and Login
+% create API Client and Login
 client = ApiClient;
 client.Login(login, password, serverType.toDotNet);
 ```
 
 ## Requesting for quotes
 Once connection has been established, all relevant data have been setup and are ready to be registered for. ```ApiClient``` provides events which can be subscribed to. However, tick data has to be registered using ```.RegisterTicks()``` method.
-For example, to receive and plot every incoming tick of EURUSD one could:
+
+For example, to receive and plot every incoming tick of **EURUSD** one could:
 
 ```matlab
 % create plotter 
 p = Plotter(10);
 
-%create listener
+% create listener
 event.listener(client,'Ticks',@(src, evnt) p.Refresh(src, evnt));
 
-%register for ticks
+% register for ticks
 lh = client.RegisterTicks('GBPUSD');
 ```
+## Trading
+```ApiClient``` provides convenient order placing mechanism:
 
+```matlab
+% Open sample order
+res = client.OpenOrder('EURUSD', mForex.API.TradeCommand.Buy, 1);
+
+% Close sample order
+res = client.CloseOrder(res.Order);
+```
 <!--
 [TOC]
 -->
@@ -62,5 +70,3 @@ lh = client.RegisterTicks('GBPUSD');
 [2]: https://github.com/mForex/mForex.API
 [3]: https://github.com/mForex/mForex.API.FSharp
 [4]: https://github.com/mForex/mForex.API.TypeScript
-
-
