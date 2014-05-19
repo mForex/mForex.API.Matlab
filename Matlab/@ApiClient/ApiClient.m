@@ -137,7 +137,7 @@ classdef ApiClient < handle
         
         function res = CloseOrder(obj, orderId, varargin)
             
-            if ~isa(orderId, 'double') || ~(rem(orderId, 1) == 0)
+            if ~((isa(orderId, 'double') && rem(orderId, 1) == 0) || isa(orderId,'integer'))
                 error('OrderId is not an integer!');
             end                 
             
