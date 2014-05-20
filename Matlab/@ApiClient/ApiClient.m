@@ -255,12 +255,12 @@ classdef ApiClient < handle
                         stopLoss = 0;                       % set default values to SL
                         takeProfit = 0;                     % set default values to TP
                 
-                    case 2                                  % Ony price and stopLoss is given
+                    case 2                                  % Only price and stopLoss is given
                         price = varargin{1};                % get price passed to function
                         stopLoss = varargin{2};             % get SL passed to function
                         takeProfit = 0;                     % set default values to Tp
                         
-                    case 3                                  % Ony price and stopLoss is given
+                    case 3                                  % Only price and stopLoss is given
                         price = varargin{1};                % get price passed to function
                         stopLoss = varargin{2};             % get SL passed to function
                         takeProfit = varargin{3};           % get TP passed to function
