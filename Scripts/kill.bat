@@ -8,7 +8,7 @@ copy /Y %1\mForex.API.Matlab.dll %2\Dll
 
 CALL :sub_load_Matlab %wasRunning% %2 LoadDll
 
-ECHO Koneic!
+ECHO Koniec!
 GOTO :eof
 
 :sub_wait_for_it    
